@@ -1,0 +1,25 @@
+---
+
+- name: Install required packages
+  opkg:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - luci-proto-wireguard
+    - wireguard-tools
+
+- name: Configure firewall
+  include_tasks: firewall.yml
+
+- name: Remove pre-existing network configuration
+  raw: "while uci -q delete network.@wireguard_wg_${LAN}[0]; do :; done"
+
+- name: Configure network
+  include_tasks: network.yml
+
+- name: Configure peer
+  include_tasks: peer.yml
+  loop: "{{ wireguard.clients }}"
+  loop_control:
+    loop_var: client
+...

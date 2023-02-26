@@ -1,0 +1,38 @@
+---
+- name: Set local domain
+  uci:
+    command: set
+    key: "dhcp.@dnsmasq[0]"
+    value: 
+      domain: "{{ network.local_domain }}"
+  notify:
+    - Commit changes
+    - Restart service
+
+- name: Set local domain
+  uci:
+    command: set
+    key: "dhcp.@dnsmasq[0]"
+    value: 
+      local: "/{{ network.local_domain }}/"
+  notify:
+    - Commit changes
+    - Restart service
+
+- name: Delete old static leases
+  raw: "while uci -q delete dhcp.host[0]; do :; done"
+
+- name: Configure static clients
+  uci: 
+    command: set
+    key: dhcp.@host[-1]
+    value:
+      name: "{{ item.hostname }}"
+      ip: "{{ item.ip }}"
+      mac: "{{ item.mac }}"
+      dns: '1'
+  loop: "{{ network.static_clients }}"
+  notify:
+  - Commit changes
+  - Restart service
+...

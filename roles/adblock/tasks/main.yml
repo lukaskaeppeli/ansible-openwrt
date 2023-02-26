@@ -1,0 +1,21 @@
+- name: Install required packages
+  opkg:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - adblock
+    - luci-app-adblock
+  notify:
+    - Restart service
+
+- name: add custom adb_sources
+  uci:
+    command: set
+    config: adblock
+    section: global
+    value:
+      adb_sources: "{{ adblock.adb_sources }}"
+      adb_stb_sources: "{{ adblock.adb_stb_sources }}"
+    notify:
+      - Commit changes
+      - Restart service

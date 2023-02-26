@@ -1,0 +1,10 @@
+---
+
+- import_playbook: sftp.yml
+- import_playbook: adblock.yml
+- import_playbook: dhcp.yml
+- import_playbook: network.yml
+- import_playbook: wireless.yml
+- import_playbook: wireguard.yml
+
+...

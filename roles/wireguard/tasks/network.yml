@@ -1,0 +1,45 @@
+- name: Remove pre-existing configuration
+  uci:
+    command: delete
+    key: "network.{{ wireguard.interface }}"
+  notify:
+    - Commit changes
+    - Restart network
+  ignore_errors: true
+
+- name: Generate WireGuard private key
+  ansible.builtin.command: "wg genkey"
+  register: wireguard__register_private_key
+  delegate_to: localhost
+
+- name: Set private key fact
+  ansible.builtin.set_fact:
+    wireguard_server_private_key: "{{ wireguard__register_private_key.stdout }}"
+
+- name: Derive WireGuard public key
+  ansible.builtin.command: "wg pubkey"
+  args:
+    stdin: "{{ wireguard_server_private_key }}"
+  register: wireguard__register_public_key
+  delegate_to: localhost
+
+- name: Set public key fact
+  ansible.builtin.set_fact:
+    wireguard_server_public_key: "{{ wireguard__register_public_key.stdout }}"
+
+- name: Add network configuration
+  uci:
+    command: section
+    config: network
+    type: interface
+    name: "{{ wireguard.interface }}"
+    value:
+      proto: wireguard
+      public_key: "{{ wireguard_server_public_key }}"
+      private_key: "{{ wireguard_server_private_key }}"
+      listen_port: "{{ wireguard.server.port }}"
+      addresses:
+        - "{{ wireguard.server.ipv4 }}/24"
+  notify:
+    - Commit changes
+    - Restart network

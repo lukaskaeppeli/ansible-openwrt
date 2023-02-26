@@ -1,0 +1,39 @@
+- name: Add new wifi interfaces
+  uci:
+    command: section
+    config: wireless
+    type: wifi-iface
+    find_by:
+      device: "{{ item }}"
+      mode: ap
+    value:
+      ssid: '{{ wireless.ssid }}'
+      encryption: '{{ wireless.encryption }}'
+      key: '{{ wireless.key }}'
+      network: 'lan'
+      ft_psk_generate_local: '1'
+      ieee80211r: '1'
+      ft_over_ds: '0'
+      mobility_domain: 'A8DF'
+  loop: "{{ wireless_devices }}"
+
+- name: Set country code
+  uci:
+    command: set
+    key: "wireless.{{ item }}"
+    value:
+      country: '{{ wireless.country_code }}'
+  loop: "{{ wireless_devices }}"
+
+- name: Enable wireless interfaces
+  uci:
+    command: set
+    key: "wireless.{{ item }}"
+    value:
+      disabled: 0
+  loop: "{{ wireless_devices }}"
+
+- name: commit changes
+  uci:
+    command: commit
+  notify: reload wifi

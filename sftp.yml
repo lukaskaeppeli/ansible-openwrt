@@ -1,0 +1,10 @@
+- name: "Apply sftp configuration"
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Update package manager
+      raw: opkg update
+
+    - name: Install openssh-sftp-server package and CLI component
+      raw: opkg install openssh-sftp-server

@@ -1,0 +1,60 @@
+- name: Add new peer entry
+  uci:
+    command: add
+    config: network
+    type: "wireguard_{{ wireguard.interface }}"
+  notify:
+    - Commit changes
+    - Restart firewall
+
+- name: Generate WireGuard private key
+  ansible.builtin.command: "wg genkey"
+  register: wireguard__register_private_key
+  delegate_to: localhost
+
+- name: Set private key fact
+  ansible.builtin.set_fact:
+    wireguard_peer_private_key: "{{ wireguard__register_private_key.stdout }}"
+  no_log: '{{ ansible_verbosity < 3 }}'
+
+- name: Derive WireGuard public key
+  ansible.builtin.command: "wg pubkey"
+  args:
+    stdin: "{{ wireguard_peer_private_key }}"
+  register: wireguard__register_public_key
+  delegate_to: localhost
+
+- name: Set public key fact
+  ansible.builtin.set_fact:
+    wireguard_peer_public_key: "{{ wireguard__register_public_key.stdout }}"
+
+- name: Set peer config
+  uci:
+    command: set
+    key: network.@wireguard_{{ wireguard.interface }}[-1]
+    value:
+      description: "{{ client.name }}"
+      public_key: "{{ wireguard_peer_public_key }}"
+      allowed_ips:
+        - "{{ client.ipv4 }}/32"
+  notify:
+    - Commit changes
+    - Restart network
+
+- name: Template peer.conf locally
+  raw: | 
+    mkdir {{ playbook_dir }}/target
+    cat << EOF > {{ playbook_dir }}/target/{{ client.name }}.conf
+    [Interface]
+    Address = {{ client.ipv4 }}
+    PrivateKey = {{ wireguard_peer_private_key }}
+    DNS = {{ wireguard.server.ipv4 }}
+
+    [Peer]
+    PublicKey = {{ wireguard_server_public_key }}
+    PersistentKeepalive = 25
+    AllowedIPs = 0.0.0.0/0, ::/0
+    Endpoint = {{ dyndns }}:{{ wireguard.server.port }}
+    EOF
+  delegate_to: localhost
+    

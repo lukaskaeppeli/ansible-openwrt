@@ -1,0 +1,62 @@
+- name: Rename firewall zone
+  uci:
+    command: rename
+    key: firewall.@zone[0]
+    value: lan
+  notify:
+    - Commit changes
+    - Restart firewall
+
+- name: Rename firewall zone
+  uci:
+    command: rename
+    key: firewall.@zone[1]
+    value: wan
+  notify:
+    - Commit changes
+    - Restart firewall
+
+- name: Remove pre-existing network list
+  uci:
+    command: del_list
+    key: firewall.lan.network
+    value: "{{ wireguard.interface }}"
+  notify:
+    - Commit changes
+    - Restart firewall
+
+- name: Add network to list
+  uci:
+    command: add_list
+    key: firewall.lan.network
+    value: "{{ wireguard.interface }}"
+  notify:
+    - Commit changes
+    - Restart firewall
+
+- name: Remove pre-existing Rule
+  uci:
+    command: delete
+    config: firewall.wg
+  notify:
+    - Commit changes
+    - Restart firewall
+  ignore_errors: true
+
+- name: Add Rule
+  uci:
+    command: section
+    config: firewall
+    type: rule
+    name: wg
+    find_by:
+      name: Allow-WireGuard
+    value:
+      name: Allow-WireGuard
+      src: wan
+      dest_port: "{{ wireguard.server.port }}"
+      proto: udp
+      target: ACCEPT
+  notify:
+    - Commit changes
+    - Restart firewall

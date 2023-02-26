@@ -1,0 +1,6 @@
+- name: "Apply adblock configuration"
+  hosts: primary
+  gather_facts: false
+  roles:
+    - gekmihesg.openwrt
+    - adblock

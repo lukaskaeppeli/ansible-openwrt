@@ -1,0 +1,8 @@
+- name: "Apply WireGuard configuration"
+  hosts: primary
+  gather_facts: false
+  vars: 
+    network: "main-net"
+  roles:
+    - gekmihesg.openwrt
+    - wireguard

@@ -1,0 +1,48 @@
+- name: Remove ula_prefix
+  uci:
+    command: delete
+    key: network.globals.ula_prefix
+  ignore_errors: true
+
+- name: Remove wan interface
+  uci:
+    command: delete
+    key: network.wan
+  notify:
+  - Commit changes
+  - Restart service
+  ignore_errors: true
+
+- name: Remove wan6 interface
+  uci:
+    command: delete
+    key: network.wan6
+  notify:
+  - Commit changes
+  - Restart service
+  ignore_errors: true
+
+- name: Set IP Address, gateway and dns
+  uci:
+    command: set
+    key: network.lan
+    value:
+      ipaddr: "{{ ansible_host }}"
+      gateway: "192.168.1.1"
+      dns: "192.168.1.1"
+  notify:
+    - Commit changes
+    - Restart service
+
+
+- name: Disable firewall dnsmasq and odhcpd
+  raw: |
+    cat << EOF > /etc/rc.local 
+    # these services do not run on dumb APs
+    for i in firewall dnsmasq odhcpd; do
+      if /etc/init.d/"$i" enabled; then
+        /etc/init.d/"$i" disable
+        /etc/init.d/"$i" stop
+      fi
+    done
+    EOF

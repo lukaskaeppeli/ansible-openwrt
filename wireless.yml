@@ -1,0 +1,6 @@
+- name: "Apply wireless configuration"
+  hosts: openwrt
+  gather_facts: false
+  roles:
+    - gekmihesg.openwrt
+    - wireless
