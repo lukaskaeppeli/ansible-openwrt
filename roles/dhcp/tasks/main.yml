@@ -21,11 +21,14 @@
 
 - name: Delete old static leases
   raw: "while uci -q delete dhcp.host[0]; do :; done"
+  notify:
+  - Commit changes
 
 - name: Configure static clients
   uci: 
-    command: set
-    key: dhcp.@host[-1]
+    command: section
+    config: dhcp
+    type: host
     value:
       name: "{{ item.hostname }}"
       ip: "{{ item.ip }}"
