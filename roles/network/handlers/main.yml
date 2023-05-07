@@ -2,5 +2,8 @@
   uci:
     command: commit
 
-- name: Restart service
+- name: Restart network
   raw: "/etc/init.d/network restart"
+
+- name: Restart dhcp
+  raw: "/etc/init.d/dnsmasq restart"
