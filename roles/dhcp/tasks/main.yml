@@ -29,6 +29,8 @@
     command: section
     config: dhcp
     type: host
+    find_by:
+      name: "{{ item.hostname }}"
     value:
       name: "{{ item.hostname }}"
       ip: "{{ item.ip }}"
