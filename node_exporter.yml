@@ -1,0 +1,39 @@
+- name: "Apply sftp configuration"
+  hosts: all
+  gather_facts: false
+  roles:
+    - gekmihesg.openwrt
+
+  tasks:
+    - name: Install required packages
+      opkg:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - prometheus-node-exporter-lua
+        - prometheus-node-exporter-lua-nat_traffic
+        - prometheus-node-exporter-lua-netstat
+        - prometheus-node-exporter-lua-openwrt
+        - prometheus-node-exporter-lua-wifi
+        - prometheus-node-exporter-lua-wifi_stations
+
+    - name: Expose metrics
+      uci:
+        command: set
+        key: prometheus-node-exporter-lua.main
+        value:
+          listen_interface: "lan"
+          listen_ipv6: "0"
+          listen_port: "9100"
+      notify:
+        - Commit changes
+        - Restart node_exporter
+
+  handlers:
+    - name: Commit changes
+      uci:
+        command: commit
+        config: network
+
+    - name: Restart node_exporter
+      raw: /etc/init.d/prometheus-node-exporter-lua restart
