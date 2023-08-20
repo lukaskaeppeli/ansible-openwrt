@@ -38,6 +38,7 @@
       public_key: "{{ wireguard_server_public_key }}"
       private_key: "{{ wireguard_server_private_key }}"
       listen_port: "{{ wireguard.server.port }}"
+      ip6ifaceid: "{{ wireguard.subnet }}"
       addresses:
         - "{{ wireguard.server.ipv4 }}/24"
   notify:
