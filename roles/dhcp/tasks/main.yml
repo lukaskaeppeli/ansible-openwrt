@@ -5,15 +5,6 @@
     key: "dhcp.@dnsmasq[0]"
     value: 
       domain: "{{ network.local_domain }}"
-  notify:
-    - Commit changes
-    - Restart service
-
-- name: Set local domain
-  uci:
-    command: set
-    key: "dhcp.@dnsmasq[0]"
-    value: 
       local: "/{{ network.local_domain }}/"
   notify:
     - Commit changes
@@ -36,6 +27,7 @@
       ip: "{{ item.ip }}"
       mac: "{{ item.mac }}"
       dns: '1'
+      duid: "{{ item.duid | default('') }}"
   loop: "{{ network.static_clients }}"
   notify:
   - Commit changes

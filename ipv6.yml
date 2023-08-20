@@ -1,0 +1,9 @@
+---
+- name: "Apply network configuration"
+  hosts: primary
+  gather_facts: false
+  roles:
+    - gekmihesg.openwrt
+    - ipv6
+
+...

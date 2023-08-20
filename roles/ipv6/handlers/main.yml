@@ -1,0 +1,6 @@
+- name: Commit changes
+  uci:
+    command: commit
+
+- name: Restart service
+  raw: "/etc/init.d/network restart"

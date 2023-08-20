@@ -1,0 +1,34 @@
+- name: Set WAN6 settings
+  uci:
+    command: set
+    key: network.wan6
+    value:
+      reqaddress: "try"
+      reqprefix: "auto"
+  notify:
+    - Commit changes
+
+- name: Set ULA Prefix
+  uci:
+    command: set
+    key: network.globals
+    value:
+      ula_prefix: "{{ network.ula_prefix }}"
+
+- name: Disable SLAAC on LAN
+  uci:
+    command: set
+    key: dhcp.lan
+    value:
+      ra_slaac: '0'
+  ignore_errors: true # Already deleted
+
+- name: Copnfigure LAN
+  uci:
+    command: set
+    key: network.lan
+    value:
+      delegate: "0"
+      ip6assign: "64"
+      ip6ifaceid: "::1"
+      ip6hint: "0"

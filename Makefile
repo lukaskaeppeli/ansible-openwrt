@@ -45,5 +45,11 @@ check_node_exporter: install-dependencies
 apply_node_exporter: install-dependencies
 	ansible-playbook -i inventory node_exporter.yml --diff
 
+check_ipv6: install-dependencies
+	ansible-playbook -i inventory ipv6.yml --check --diff
+
+apply_ipv6: install-dependencies
+	ansible-playbook -i inventory ipv6.yml --diff
+
 apply: install-dependencies
 	ansible-playbook -i inventory site.yml --diff
