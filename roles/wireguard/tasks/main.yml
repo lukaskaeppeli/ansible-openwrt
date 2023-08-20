@@ -8,6 +8,15 @@
     - luci-proto-wireguard
     - wireguard-tools
 
+- name: Local - Install required packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - python3-qrcode
+    - qrencode
+  delegate_to: localhost
+
 - name: Configure firewall
   include_tasks: firewall.yml
 

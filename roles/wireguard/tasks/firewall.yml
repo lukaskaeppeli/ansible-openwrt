@@ -37,7 +37,7 @@
 - name: Remove pre-existing Rule
   uci:
     command: delete
-    config: firewall.wg
+    config: firewall
   notify:
     - Commit changes
     - Restart firewall
@@ -48,7 +48,6 @@
     command: section
     config: firewall
     type: rule
-    name: wg
     find_by:
       name: Allow-WireGuard
     value:
