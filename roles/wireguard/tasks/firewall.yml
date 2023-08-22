@@ -4,7 +4,7 @@
     key: firewall.@zone[0]
     value: lan
   notify:
-    - Commit changes
+    - Commit firewall
     - Restart firewall
 
 - name: Rename firewall zone
@@ -13,7 +13,7 @@
     key: firewall.@zone[1]
     value: wan
   notify:
-    - Commit changes
+    - Commit firewall
     - Restart firewall
 
 - name: Remove pre-existing network list
@@ -22,7 +22,7 @@
     key: firewall.lan.network
     value: "{{ wireguard.interface }}"
   notify:
-    - Commit changes
+    - Commit firewall
     - Restart firewall
 
 - name: Add network to list
@@ -31,7 +31,7 @@
     key: firewall.lan.network
     value: "{{ wireguard.interface }}"
   notify:
-    - Commit changes
+    - Commit firewall
     - Restart firewall
 
 - name: Remove pre-existing Rule
@@ -39,7 +39,7 @@
     command: delete
     config: firewall
   notify:
-    - Commit changes
+    - Commit firewall
     - Restart firewall
   ignore_errors: true
 
@@ -57,5 +57,5 @@
       proto: udp
       target: ACCEPT
   notify:
-    - Commit changes
+    - Commit firewall
     - Restart firewall

@@ -1,8 +1,13 @@
 ---
-- name: Commit changes
+- name: Commit network
   uci:
     command: commit
     config: network
+
+- name: Commit firewall
+  uci:
+    command: commit
+    config: firewall
 
 - name: Restart network
   raw: /etc/init.d/network restart

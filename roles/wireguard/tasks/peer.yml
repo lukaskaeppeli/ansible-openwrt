@@ -33,7 +33,7 @@
         - "{{ client.ipv4 }}/32"
         - "fd00{{ wireguard.subnet }}{{ client.ipv6 }}/128"
   notify:
-    - Commit changes
+    - Commit network
     - Restart network
 
 - name: Template peer.conf locally

@@ -3,7 +3,7 @@
     command: delete
     key: "network.{{ wireguard.interface }}"
   notify:
-    - Commit changes
+    - Commit network
     - Restart network
   ignore_errors: true
 
@@ -41,6 +41,7 @@
       ip6ifaceid: "{{ wireguard.subnet }}"
       addresses:
         - "{{ wireguard.server.ipv4 }}/24"
+        - "fd00{{ wireguard.subnet }}{{ wireguard.server.ipv6 }}/128"
   notify:
-    - Commit changes
+    - Commit network
     - Restart network
