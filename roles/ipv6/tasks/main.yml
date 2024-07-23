@@ -8,13 +8,6 @@
   notify:
     - Commit changes
 
-- name: Set ULA Prefix
-  uci:
-    command: set
-    key: network.globals
-    value:
-      ula_prefix: "{{ network.ula_prefix }}"
-
 - name: Disable SLAAC on LAN
   uci:
     command: set
