@@ -31,7 +31,6 @@
       public_key: "{{ wireguard_peer_public_key }}"
       allowed_ips:
         - "{{ client.ipv4 }}/32"
-        - "fd00{{ wireguard.subnet }}{{ client.ipv6 }}/128"
   notify:
     - Commit network
     - Restart network
@@ -48,7 +47,7 @@
     [Peer]
     PublicKey = {{ wireguard_server_public_key }}
     PersistentKeepalive = 25
-    AllowedIPs = 0.0.0.0/0, ::/0
+    AllowedIPs = 0.0.0.0/0
     Endpoint = {{ dyndns }}:{{ wireguard.server.port }}
     EOF
   delegate_to: localhost

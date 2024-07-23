@@ -36,6 +36,12 @@ apply_wireless: install-dependencies
 check_wireguard: install-dependencies
 	ansible-playbook -i inventory wireguard.yml --check --diff
 
+check_port_forwards: install-dependencies
+	ansible-playbook -i inventory port_forwards.yml --check --diff
+
+apply_port_forwards: install-dependencies
+	ansible-playbook -i inventory port_forwards.yml --diff
+
 apply_wireguard: install-dependencies
 	ansible-playbook -i inventory wireguard.yml --diff
 
@@ -53,3 +59,6 @@ apply_ipv6: install-dependencies
 
 apply: install-dependencies
 	ansible-playbook -i inventory site.yml --diff
+
+check: install-dependencies
+	ansible-playbook -i inventory site.yml --check --diff
