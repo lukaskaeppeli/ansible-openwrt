@@ -1,0 +1,17 @@
+- name: Add Rule for IPv4
+  uci:
+    command: section
+    config: firewall
+    type: redirect
+    find_by:
+      name: "{{ item.name }}"
+    value:
+      name: "{{ item.name }}"
+      protocol: "{{ item.protocol }}"
+      src: "{{ item.src }}"
+      port: "{{ item.port }}"
+      dest_ip: "{{ item.dest_ip_v4 }}"
+  notify:
+    - Commit firewall
+    - Restart firewall
+  loop: "{{ network.port_forwards }}"

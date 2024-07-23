@@ -1,0 +1,8 @@
+---
+- name: "Configure port_forwards"
+  hosts: primary
+  gather_facts: false
+  roles:
+    - gekmihesg.openwrt
+    - port_forwards
+...
