@@ -39,13 +39,13 @@
       proto: 'static'
       netmask: '255.255.255.0'
       ipaddr: "{{ ansible_host }}"
-      gateway: "192.168.1.1"
+      gateway: "{{ network.gateway }}"
 
 - name: Set dns to primary
   uci:
     command: add_list
     key: network.lan.dns
-    value: "192.168.1.1"
+    value: "{{ network.gateway }}"
   notify:
     - Commit changes
     - Restart network
