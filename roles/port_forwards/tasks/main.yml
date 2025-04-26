@@ -14,4 +14,4 @@
   notify:
     - Commit firewall
     - Restart firewall
-  loop: "{{ network.port_forwards }}"
+  loop: "{{ network.port_forwards | default([]) }}"
