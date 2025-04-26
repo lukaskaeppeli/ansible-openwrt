@@ -1,5 +1,5 @@
 - name: "Apply wireless configuration"
-  hosts: openwrt
+  hosts: dumb_ap
   gather_facts: false
   roles:
     - gekmihesg.openwrt
